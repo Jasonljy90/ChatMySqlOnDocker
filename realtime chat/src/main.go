@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/bregydoc/gtranslate"
+	"github.com/gorilla/websocket"
 	"golang.org/x/text/language"
 )
 
@@ -71,24 +71,27 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Need modify it to translate language before seding to every client
+// Need modify it to translate language before sending to every client
 func handleMessages() {
 	var msgNew = ""
-	clientLanguage := "Chinese"
+	clientLanguage := "English"
 	for {
 		// Grab the next message from the broadcast channel
 		msg := <-broadcast
 		// Send it out to every client that is currently connected
 		for client := range clients {
-			if clientLanguage == "Japanese"{
+			if clientLanguage == "Japanese" {
 				msgNew = engToJapMsg(msg.Message)
-			}else if clientLanguage == "Chinese"{
+			} else if clientLanguage == "Chinese" {
 				msgNew = engToChineseMsg(msg.Message)
-			}else if clientLanguage == "German"{
+			} else if clientLanguage == "German" {
 				msgNew = engToGermanMsg(msg.Message)
-			}else if clientLanguage == "Spanish"{
+			} else if clientLanguage == "Spanish" {
 				msgNew = engToSpanishMsg(msg.Message)
+			} else {
+				msgNew = msg.Message
 			}
+
 			msg.Message = msgNew
 			err := client.WriteJSON(msg)
 			if err != nil {
@@ -119,7 +122,7 @@ func handleMessages() {
 */
 
 // Translate English To Japanese
-func engToJapMsg(msgContent string) string{
+func engToJapMsg(msgContent string) string {
 	translatedText, err := gtranslate.TranslateWithParams(
 		msgContent,
 		gtranslate.TranslationParams{
@@ -130,13 +133,13 @@ func engToJapMsg(msgContent string) string{
 	if err != nil {
 		panic(err)
 	}
-	
+
 	return translatedText
 	//fmt.Printf("en: %s | ja: %s \n", msgContent, translated)
 }
 
-// Translate English To Spainish 
-func engToSpanishMsg(msgContent string) string{
+// Translate English To Spainish
+func engToSpanishMsg(msgContent string) string {
 	translatedText, err := gtranslate.Translate(msgContent, language.English, language.Spanish)
 
 	if err != nil {
@@ -148,7 +151,7 @@ func engToSpanishMsg(msgContent string) string{
 }
 
 // Translate English To Chinese
-func engToChineseMsg(msgContent string) string{
+func engToChineseMsg(msgContent string) string {
 	translatedText, err := gtranslate.Translate(msgContent, language.English, language.SimplifiedChinese)
 
 	if err != nil {
@@ -160,13 +163,13 @@ func engToChineseMsg(msgContent string) string{
 }
 
 // Translate English To German
-func engToGermanMsg(msgContent string) string{
+func engToGermanMsg(msgContent string) string {
 	translatedText, err := gtranslate.Translate(msgContent, language.English, language.German)
 
 	if err != nil {
 		panic(err)
 	}
-	
+
 	return translatedText
 	//fmt.Printf("en: %s | german: %s \n", msgContent, translatedText)
 }
