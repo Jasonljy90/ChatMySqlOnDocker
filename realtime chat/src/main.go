@@ -4,9 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bregydoc/gtranslate"
 	"github.com/gorilla/websocket"
-	"golang.org/x/text/language"
 )
 
 var clients = make(map[*websocket.Conn]bool) // connected clients
@@ -101,75 +99,4 @@ func handleMessages() {
 			}
 		}
 	}
-}
-
-/*
-func handleMessages() {
-	for {
-		// Grab the next message from the broadcast channel
-		msg := <-broadcast
-		// Send it out to every client that is currently connected
-		for client := range clients {
-			err := client.WriteJSON(msg)
-			if err != nil {
-				log.Printf("error: %v", err)
-				client.Close()
-				delete(clients, client)
-			}
-		}
-	}
-}
-*/
-
-// Translate English To Japanese
-func engToJapMsg(msgContent string) string {
-	translatedText, err := gtranslate.TranslateWithParams(
-		msgContent,
-		gtranslate.TranslationParams{
-			From: "en",
-			To:   "ja",
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	return translatedText
-	//fmt.Printf("en: %s | ja: %s \n", msgContent, translated)
-}
-
-// Translate English To Spainish
-func engToSpanishMsg(msgContent string) string {
-	translatedText, err := gtranslate.Translate(msgContent, language.English, language.Spanish)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return translatedText
-	//fmt.Printf("en: %s | spainish: %s \n", msgContent, translatedText)
-}
-
-// Translate English To Chinese
-func engToChineseMsg(msgContent string) string {
-	translatedText, err := gtranslate.Translate(msgContent, language.English, language.SimplifiedChinese)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return translatedText
-	//fmt.Printf("en: %s | simplified chinese: %s \n", msgContent, translatedText)
-}
-
-// Translate English To German
-func engToGermanMsg(msgContent string) string {
-	translatedText, err := gtranslate.Translate(msgContent, language.English, language.German)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return translatedText
-	//fmt.Printf("en: %s | german: %s \n", msgContent, translatedText)
 }

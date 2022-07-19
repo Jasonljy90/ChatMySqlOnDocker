@@ -10,7 +10,7 @@ import (
 )
 
 func sendEmail(email string, firstName string, lastName, link string) {
-	from := mail.NewEmail("Live Chat", "jasonljy90@gmail.com")
+	from := mail.NewEmail("Live Chat", "SENDER_EMAIL") //jasonljy90@gmail.com
 	subject := "Password Reset Request"
 	to := mail.NewEmail(firstName+" "+lastName, email)
 	plainTextContent := "You have received this email because a password reset request for Foodpanda account was received. The reset link will only be valid for 30mins. Click the link to reset your password: \r\n" + link
