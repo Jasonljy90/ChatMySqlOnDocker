@@ -110,3 +110,5 @@ func germanToEngMsg(msgContent string) string {
 	return translatedText
 	//fmt.Printf("en: %s | german: %s \n", msgContent, translatedText)
 }
+
+//test whatsapp
