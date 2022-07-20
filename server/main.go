@@ -45,7 +45,7 @@ func userLoginSuccess(res http.ResponseWriter, req *http.Request) {
 
 //Load environment variables
 func getEnvVars() {
-	err := godotenv.Load("sendgrid.env")
+	err := godotenv.Load("secret.env")
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
