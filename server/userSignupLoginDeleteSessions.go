@@ -27,10 +27,16 @@ type user struct {
 	//***UserType  string `validate:"required"`
 }
 
-// Declaration of type patient
+// Declaration of type user change password
 type userChangePw struct {
 	UserName string `validate:"required"`
 	Password string `validate:"required"`
+}
+
+// Declaration of type user reset change password
+type userResetChangePw struct {
+	Password  string `validate:"required"`
+	Password1 string `validate:"required"`
 }
 
 // Declaration of dbPatients and dbSessions map
@@ -407,8 +413,12 @@ func userResetPassword(res http.ResponseWriter, req *http.Request) {
 func userResetChangePassword(res http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost { // Error handling for no input
 		password := req.FormValue("password")
+		password1 := req.FormValue("password1")
+
+		p := userResetChangePw{password, password1}
 		validate := validator.New()
-		err := validate.Var(password, "required")
+		err := validate.Struct(p)
+
 		if err != nil {
 			io.WriteString(res, `
 			<html>
@@ -419,26 +429,38 @@ func userResetChangePassword(res http.ResponseWriter, req *http.Request) {
 			`)
 			return
 		} else {
-			validPwCheck := isValidPassword(password)
-			if !validPwCheck {
+			// Check if new password match
+			equal := strings.Compare(password, password1)
+			if equal != 0 {
 				io.WriteString(res, `
+				<html>
+				<meta http-equiv='refresh' content='5; url=/userresetchangepassword '/>
+				New password do not match. Please try again.<br>
+				You will be redirected shortly in 5 seconds...<br>
+				</html>
+				`)
+			} else {
+				validPwCheck := isValidPassword(password)
+				if !validPwCheck {
+					io.WriteString(res, `
 				<html>
 				<meta http-equiv='refresh' content='5; url=/userresetchangepassword '/>
 				Password too simple! At least 1 uppercase, lowercase, digit, special character and 8 characters long.<br>
 				You will be redirected shortly in 5 seconds...<br>
 				</html>
 			`)
+					return
+				}
+				userChangePasswordDataBase(userEmail, password)
+				io.WriteString(res, `
+				<html>
+				<meta http-equiv='refresh' content='5; url=/userlogin '/>
+				Password successfully updated!<br>
+				You will be redirected shortly in 5 seconds...<br>
+				</html>
+				`)
 				return
 			}
-			userChangePasswordDataBase(userEmail, password)
-			io.WriteString(res, `
-			<html>
-			<meta http-equiv='refresh' content='5; url=/userlogin '/>
-			Password successfully updated!<br>
-			You will be redirected shortly in 5 seconds...<br>
-			</html>
-			`)
-			return
 		}
 	}
 	tpl.ExecuteTemplate(res, "userResetChangePw.gohtml", nil)
