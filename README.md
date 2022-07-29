@@ -30,6 +30,17 @@ h.) To see what is in userAccountDB User table:
     SHOW COLUMNS FROM userAccountDB.Users;
 
 ====================================================================================================================================================================
+Face Recognition:
+1.) Run Machine Box Docker container:
+    docker run -d -p 8080:8080 -e "MB_KEY=$MB_KEY" machinebox/facebox
+
+2.) Install OpenCV
+    a.) brew install opencv3
+    b.) go get gocv.io/x/gocv
+
+
+
+====================================================================================================================================================================
 TO RUN PROGRAM:
 
 a.) Open folder C:\Users\user1\Desktop\GitHub\Chat\realtime chat\src
